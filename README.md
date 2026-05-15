@@ -5,6 +5,22 @@ El [Hospital Universitario Virgen de la Victoria (El Clínico)](https://www.sspa
 
 ![MOdelo de características de la calculadora de salud.](resources/images/healthcalc_fm.png)
 
+## Interfaz de Usuario
+
+A continuación se muestra el boceto de diseño de la interfaz gráfica de la **Calculadora de Salud**, que ilustra la disposición y organización de los componentes de la aplicación:
+
+![Boceto de la Calculadora de Salud - HealthCalc](doc/P4/boceto.PNG)
+
+**Descripción del boceto:** La interfaz está organizada en una ventana principal con tres pestañas (`JTabbedPane`) que permiten acceder a cada uno de los cálculos disponibles:
+
+1. **Pestaña "Calcular BMI"**: Contiene campos de entrada para peso (kg) y altura (cm), un botón para ejecutar el cálculo, y etiquetas de resultado que muestran tanto el valor numérico del IMC como su clasificación clínica (Normal, Sobrepeso, Obesidad, etc.) con código de colores para facilitar la interpretación visual.
+
+2. **Pestaña "Calcular IBW"**: Permite ingresar la altura en centímetros y seleccionar el sexo del paciente (Hombre/Mujer) mediante un selector, botón de cálculo y resultado del peso corporal ideal según la fórmula de Lorentz.
+
+3. **Pestaña "Calcular VAI"**: Requiere múltiples métricas (IMC, circunferencia de cintura, triglicéridos, HDL) y sexo del paciente para calcular el Índice de Adiposidad Visceral, proporcionando un indicador de riesgo cardiometabólico.
+
+La interfaz utiliza un diseño limpio y funcional con layouts en `GridBag` y `FormLayout` para una distribución óptima de componentes, facilitando la interacción y legibilidad de los resultados clínicos.
+
 ## Requisitos  
 
 <details>
@@ -358,18 +374,183 @@ Para garantizar que la calculadora sea fiable y segura, se han definido los sigu
 
 </details>
 
----
+<details>
+<summary><b>Ejecutable JAR (Recomendado)</b></summary>
 
-## Resultados de Pruebas y Cobertura (Práctica 1)
+### Requisito
+- Java Runtime Environment (JRE) 18 o superior instalado en el sistema
 
-Siguiendo la metodología de Desarrollo Dirigido por Tests (TDD) y el **patrón AAA (Arrange, Act, Assert)**, se han implementado y superado todos los casos de prueba definidos anteriormente para las métricas requeridas.
+### Ejecución del fichero JAR
+El fichero ejecutable `HealthCalc.jar` se encuentra en la **raíz del repositorio** y puede ser ejecutado de dos formas:
 
-### Ejecución de Tests
-Se han ejecutado un total de 73 tests exitosamente, cubriendo las métricas de BMI, IBW y VAI.
-![Resultado de la ejecución de los tests](resources/p1/tests.png)
+1. **Doble clic directo:** 
+   - En sistemas operativos con GUI (Windows, macOS, Linux con entorno gráfico), simplemente haz doble clic sobre el fichero `HealthCalc.jar` para lanzar la aplicación.
 
-### Informe de Cobertura
-Se ha logrado una cobertura de código del 100%, tal como se muestra en el informe generado por Jacoco:
-![Informe de cobertura al 100%](resources/p1/cobertura.png)
+2. **Terminal (Línea de comandos):**
+   ```bash
+   java -jar HealthCalc.jar
+   ```
+
+Esta es la forma más rápida y conveniente de ejecutar la aplicación, ya que no requiere compilación ni herramientas adicionales, únicamente Java instalado.
 
 </details>
+
+---
+
+## Resultados de pruebas, BDD y cobertura
+
+Siguiendo la metodología TDD y el patrón **AAA (Arrange, Act, Assert)**, el proyecto combina pruebas unitarias (JUnit 5) y pruebas funcionales BDD (Cucumber).
+
+### Tipos de test implementados
+
+1. **Pruebas unitarias (JUnit 5)**
+    - Verifican el cálculo matemático de cada métrica.
+    - Verifican validaciones de entrada (rangos, negativos, cero, sexo inválido, límites biológicos).
+    - Incluyen pruebas de frontera y casos representativos.
+
+2. **Pruebas BDD (Cucumber + Gherkin en español)**
+El uso de BDD permite validar el comportamiento del sistema desde el punto de vista del usuario final, asegurando que las funcionalidades implementadas cumplen con los requisitos definidos.
+    - Definen comportamiento funcional desde escenarios de usuario.
+    - Se ejecutan con `RunCucumberTest` y recorren los tres ficheros:
+      - `src/test/resources/features/BMI.feature`
+      - `src/test/resources/features/IW.feature`
+      - `src/test/resources/features/VAI.feature`
+    - Generan informe HTML de ejecución en:
+      - `java-project-healthcalc/target/reporte.html`
+
+3. **Cobertura de código (JaCoCo)**
+    - Se ejecuta automáticamente al lanzar `mvn test`.
+    - Informe HTML disponible en:
+      - `java-project-healthcalc/target/site/jacoco/index.html`
+
+### Resumen de ejecución actual (Java)
+
+- Comando: `mvn test`
+- Resultado: **BUILD SUCCESS**
+- Total: **139 tests**
+- Fallos: **0**
+- Errores: **0**
+- Desglose relevante:
+  - **Cucumber (BMI + IW + VAI): 53 escenarios**
+  - **JUnit (unitarios): 86 tests**
+
+### Detalle de Métricas: tests realizados
+
+#### BMI (Body Mass Index)
+
+**Enlace al fichero BDD:** [`BMI.feature`](java-project-healthcalc/src/test/resources/features/BMI.feature)
+
+**Historia de Usuario 1: Calcular BMI**
+> **As a** healthcare professional,
+> **I want** to calculate a patient's BMI using their weight and height,
+> **So that** I can obtain a standardized numerical value of their body mass.
+
+*Escenarios BDD:*
+- Escenario: Calcular BMI con datos válidos
+- Escenario: Calcular BMI con altura nula
+- Escenario: Calcular BMI con peso negativo
+- Escenario: Calcular BMI con peso biológicamente imposible
+
+**Historia de Usuario 2: Clasificación Completa (Full) del BMI**
+> **As a** healthcare professional,
+> **I want** to get the full clinical classification based on the BMI value,
+> **So that** I can evaluate the patient's nutritional status.
+
+*Escenarios BDD:*
+- Esquema del escenario: Clasificación completa del BMI (Cubre: *Severe thinness, Moderate thinness, Mild thinness, Normal weight, Overweight, Obese Class I, Obese Class II, Obese Class III*).
+
+**Unitarios (`BMITest`)**
+- Casos correctos matemáticos para el BMI y su clasificación.
+- Pruebas de frontera y valores límite exactos para cada rango de clasificación.
+- Validaciones de valores nulos, negativos y límites biológicos excedidos.
+
+#### IW (Ideal Weight)
+
+**Enlace al fichero BDD:** [`IW.feature`](java-project-healthcalc/src/test/resources/features/IW.feature)
+
+**Unitarios (`IWTest`)**
+- Casos correctos para hombre y mujer.
+- Validación de sexo inválido.
+- Validación de altura negativa, cero y fuera de rango biológico.
+- Casos de frontera y ejemplos representativos.
+
+**BDD (`IW.feature`)**
+- Escenarios de éxito (hombre/mujer).
+- Escenarios de error por sexo inválido.
+- Escenarios de error por altura negativa y límites biológicos.
+- Esquemas de escenario con múltiples ejemplos.
+
+#### VAI (Visceral Adiposity Index)
+
+**Enlace al fichero BDD:** [`VAI.feature`](java-project-healthcalc/src/test/resources/features/VAI.feature)
+
+**Unitarios (`VAITest`)**
+- Cálculo correcto para hombre y mujer.
+- Validaciones de sexo inválido.
+- Validaciones de TG, HDL, IMC y cintura con valores nulos/negativos.
+- Validaciones de límites biológicos máximos.
+
+**BDD (`VAI.feature`)**
+- Escenarios de éxito para ambos sexos.
+- Escenarios de error para entradas inválidas.
+- Escenarios con ejemplos para límites biológicos (TG, HDL, IMC, cintura).
+
+### Estado pendiente / mejoras recomendadas
+
+Aunque los tests actuales pasan y cubren correctamente BMI, VAI e IW, quedan mejoras posibles:
+
+1. **Soft limits (avisos clínicos)**
+    - Actualmente se validan hard limits (bloqueo), pero no hay flujo de aviso para valores inusuales no bloqueantes.
+
+2. **Trazabilidad requisito → test**
+    - Añadir una tabla explícita de trazabilidad para mapear cada requisito funcional/no funcional con sus tests unitarios y BDD.
+
+3. **Estandarizar reportes en CI**
+    - Publicar automáticamente `target/reporte.html` (Cucumber) y `target/site/jacoco/index.html` (JaCoCo) en pipeline.
+### Evidencias de ejecución BDD
+
+A continuación se muestran las capturas de la ejecución exitosa de todos los tests BDD implementados en la Práctica 3:
+
+**1. Ejecución de escenarios BMI:**
+![Ejecución BMI](doc/P3/bdd_bmi.png)
+
+**2. Ejecución de escenarios IW:**
+![Ejecución IW](doc/P3/bdd_iw.png)
+
+**3. Ejecución de escenarios VAI:**
+![Ejecución VAI](doc/P3/bdd_vai.png)
+
+**4. Resumen final (Build Success):**
+![Resumen de ejecución](doc/P3/bdd_summary.png)
+
+
+## Patrones de diseño
+
+### Patrón Singleton
+
+Nos permite garantizar que solo hay una única instancia de la calculadora que sirve como acceso global.
+
+![Singleton](design_patterns/singleton.png)
+
+### Patrón Adapter
+
+Hemos creado un adaptador para poder trabajar con datos en las unidades especificadas por el hospital (y también el formato de respuesta esperado) sin tener que reimplementar nuestra calculadora al completo. Para la respuesta del BMI hemos incluido una clase que hace las veces de tupla, combinando el resultado numérico del cálculo y su clasificación asociada. Todo basandonos en el contrato proporcionado por el hospital.
+
+![Adapter](design_patterns/adapter.png)
+
+### Patrón Decorator
+
+El patrón Decorator permite agregar funcionalidades adicionales a objetos en tiempo de ejecución de manera dinámica, sin modificar su estructura original. En nuestro caso, hemos implementado `HealthHospitalStatsDecorator` para añadir la capacidad de recopilar estadísticas sobre los pacientes (altura media, peso media, IMC medio, etc.) mientras se mantienen todas las funcionalidades del adaptador original.
+
+La clase `HealthHospitalStatsDecorator` envuelve una instancia de `HealthHospital` y registra las estadísticas cada vez que se invoca un método, proporcionando una interfaz adicional `HealthStats` que expone métodos para acceder a estas métricas agregadas.
+
+![Decorator](design_patterns/decorator.png)
+
+### Patrón Strategy
+Nos permite definir diferentes versiones de la calculadora (europea y americana) y gestionar varios idiomas de forma intercambiable. Al encapsular cada lógica en una estrategia específica, el sistema puede cambiar su comportamiento en tiempo de ejecución sin modificar el código original, cumpliendo con el principio Open/Closed y reutilizando la instancia única del Singleton.
+![Strategy](design_patterns/strategy.png)
+
+### Diagrama Global Combinado
+El siguiente diagrama ilustra la arquitectura global de la aplicación, mostrando cómo los diferentes patrones de diseño (Singleton, Adapter, Decorator y Strategy) interactúan entre sí y son orquestados a través de la clase `Main`.
+
+![Diagrama Global](design_patterns/diagrama_global.png)
