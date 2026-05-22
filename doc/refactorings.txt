@@ -1,0 +1,305 @@
+PRÁCTICA 7 - REFACTORINGS
+
+========================================
+REFACTORING 1
+========================================
+
+Bad smell / problema detectado
+Primitive Obsession / Type Code. 
+El sexo de la persona se representa con chars (m y f), 
+esto puede producir errores y reduce la claridad del código.
+
+Refactoring aplicado
+Replace Type Code with Enum / Extract Class.
+
+Tipo
+Class Refactoring.
+
+Descripción del cambio realizado
+Se ha creado el enumerado Gender con los valores MALE y FEMALE.
+
+Número de cambios manuales realizados
+1 clase creada (Gender.java).
+
+=========================================
+REFACTORING 2
+========================================
+
+Bad smell / problema detectado
+
+Primitive Obsession / Type Code.
+Las categorías del índice BMI se representan actualmente mediante cadenas de texto,
+lo que puede producir errores y reduce la claridad del código.
+
+
+Refactoring aplicado
+
+Reemplazar código de tipo por enumerado / Extraer clase.
+
+
+Tipo
+
+Refactorización de clases.
+
+
+Descripción del cambio realizado
+
+Se ha creado el enum BMICategory con las distintas clasificaciones
+del índice de masa corporal.
+
+
+Número de cambios manuales realizados
+
+1 clase creada (BMICategory.java).
+
+=========================================
+REFACTORING 3
+========================================
+
+Bad smell / problema detectado
+
+Long Parameter List / Data Clumps.
+Los datos relacionados con una persona, como peso, altura, sexo y edad,
+se pasan como parámetros independientes en distontos métodos.
+
+
+Refactoring aplicado
+
+Introducir objeto parámetro / Extraer interfaz / Extraer clase.
+
+
+Tipo
+
+Refactorización de clases.
+
+
+Descripción del cambio realizado
+
+Se ha creado la interfaz Person para representar los datos básicos de una
+persona según el esquema propuesto en la práctica. Además, se ha creado la
+clase HealthPerson como implementación concreta de dicha interfaz.
+
+
+Número de cambios manuales realizados
+
+1 interfaz creada (Person.java) y 1 clase creada (HealthPerson.java).
+
+
+========================================
+REFACTORING 4
+========================================
+
+Bad smell / problema detectado
+
+Long Parameter List / Data Clumps.
+El cálculo del BMI recibía peso y altura como parámetros,
+aunque ambos datos son de la misma persona.
+
+
+Refactoring aplicado
+
+Introducir objeto parámetro.
+
+
+Tipo
+
+Refactorización de métodos.
+
+
+Descripción del cambio realizado
+
+Se ha añadido una nueva versión del método bmi que recibe un objeto Person.
+El método antiguo se mantiene para conservar la compatibilidad con el código
+existente.
+
+
+
+Número de cambios manuales realizados
+
+1 método añadido en la interfaz HealthCalc y 1 método añadido en HealthCalcImpl.
+
+
+========================================
+REFACTORING 5
+========================================
+
+Bad smell / problema detectado
+
+Primitive Obsession / Type Code.
+La clasificación del BMI era un string, aunque representa un conjunto cerrado de categorías.
+
+
+Refactoring aplicado
+
+Reemplazar código de tipo por enumerado.
+
+
+Tipo
+
+Refactorización de métodos.
+
+
+Descripción del cambio realizado
+
+Se ha añadido el método category(Person) para devolver la clasificación BMI con el enum BMICategory.
+ El método antiguo bmiClassification(double) se mantiene para conservar la compatibilidad.
+
+
+Número de cambios manuales realizados
+
+1 método añadido en la interfaz HealthCalc y 1 método añadido en HealthCalcImpl.
+
+
+
+========================================
+REFACTORING 6
+========================================
+
+Bad smell / problema detectado
+
+Long Parameter List / Data Clumps.
+El cálculo del peso ideal recibía altura y sexo como parámetros independientes,
+aunque ambos son de una sola persona.
+
+
+Refactoring aplicado
+
+Introducir objeto parámetro.
+
+
+Tipo
+
+Refactorización de métodos.
+
+
+Descripción del cambio realizado
+
+Se ha añadido una nueva versión del método idealWeight que recibe un objeto Person.
+El método antiguo se mantiene para conservar la compatibilidad con la implementaciónactual.
+
+
+Número de cambios manuales realizados
+
+1 método añadido en la interfaz HealthCalc y 1 método añadido en HealthCalcImpl.
+
+
+========================================
+REFACTORING 7
+========================================
+
+Bad smell / problema detectado
+
+Large Interface / Divergent Change.
+La interfaz principal tenía muchas responsabilidades de métricas de salud distintas.
+
+
+Refactoring aplicado
+
+Extraer interfaz.
+
+
+Tipo
+
+Refactorización de clases.
+
+
+Descripción del cambio realizado
+
+Se ha creado la interfaz BasalMetabolicIndex para separar la
+responsabilidad relacionada con el cálculo y clasificación del BMI.
+HealthCalcImpl implementa ahora esta nueva interfaz.También se han añadido junit test para validar el uso
+de Person y BMICategory en los nuevos métodos refactorizados.
+
+
+Número de cambios manuales realizados
+
+1 interfaz creada,1 modificación en HealthCalcImpl.
+2 test añadidos.
+
+
+========================================
+REFACTORING 8
+========================================
+
+Bad smell / problema detectado
+
+Duplicación de código.
+La lógica de clasificación del BMI estaba repetida en bmiClassification(double)
+y en category(Person), usando bloques condicionales similares.
+
+Refactoring aplicado
+
+Extraer método.
+
+Tipo
+
+Refactorización de métodos.
+
+Descripción del cambio realizado
+
+Se ha extraído la lógica común de clasificación BMI a un método privado
+categoryFromBmi(double). Además, bmiClassification(double) reutiliza esa
+lógica y transforma la categoría a texto mediante categoryToText(BMICategory).
+
+Número de cambios manuales realizados
+
+2 métodos privados añadidos y 2 métodos públicos modificados en HealthCalcImpl.
+
+========================================
+REFACTORING 9
+========================================
+
+Bad smell / problema detectado
+
+Divergent Change / uso inconsistente del nuevo modelo.
+La interfaz gráfica de BMI seguía utilizando peso y altura como parámetros
+sueltos, aunque ya existe el modelo Person para representar datos de paciente.
+
+Refactoring aplicado
+
+Introducir objeto parámetro.
+
+Tipo
+
+Refactorización de métodos.
+
+Descripción del cambio realizado
+
+Se ha adaptado el controlador de la GUI para crear un objeto HealthPerson
+en el cálculo de BMI y usar los métodos bmi(Person) y category(Person).
+Los valores de género y edad no afectan al cálculo de BMI.
+
+Número de cambios manuales realizados
+
+1 método modificado en HealthCalcController.
+
+
+========================================
+REFACTORING 10
+========================================
+
+Bad smell / problema detectado
+
+Primitive Obsession / Long Parameter List.
+Las pruebas de peso ideal dependían de parámetros primitivos separados
+para representar datos pertenecientes a una misma persona.
+
+Refactoring aplicado
+
+Introducir objeto parámetro / Reemplazar código de tipo por enumerado.
+
+Tipo
+
+Refactorización de pruebas.
+
+Descripción del cambio realizado
+
+Se han añadido pruebas de peso ideal usando HealthPerson y Gender,
+validando el uso del nuevo modelo Person y del enum Gender en lugar de
+depender únicamente de valores primitivos o strings.
+
+Número de cambios manuales realizados
+
+2 tests añadidos en IWTest.
+
+

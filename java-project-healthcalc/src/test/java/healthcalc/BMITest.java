@@ -27,7 +27,7 @@ public class BMITest {
 
 	@BeforeEach
 	void setUp() {
-		healthCalc = new HealthCalcImpl();
+		healthCalc = HealthCalcImpl.getInstance();
 	}
 
     @Nested
@@ -220,5 +220,36 @@ public class BMITest {
         }
 
     }
+
+    @Nested
+@DisplayName("BMI usando objetos Person")
+class BMIPersonTests {
+
+    @Test
+    @DisplayName("Cálculo de BMI usando Person")
+    void testBmiConPerson() throws InvalidHealthDataException {
+
+        Person person =
+                new HealthPerson(70.0, 1.75, Gender.MALE, 25);
+
+        double expected = 70.0 / Math.pow(1.75, 2);
+
+        double result = healthCalc.bmi(person);
+
+        assertEquals(expected, result, 0.01);
+    }
+
+    @Test
+    @DisplayName("Clasificación BMI usando Person")
+    void testCategoryConPerson() throws InvalidHealthDataException {
+
+        Person person =
+                new HealthPerson(70.0, 1.75, Gender.MALE, 25);
+
+        BMICategory result = healthCalc.category(person);
+
+        assertEquals(BMICategory.NORMAL_WEIGHT, result);
+    }
+}
 
 }

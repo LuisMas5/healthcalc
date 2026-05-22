@@ -18,7 +18,7 @@ import healthcalc.exceptions.InvalidHealthDataException;
 @DisplayName("Tests for ideal weight (IW).")
 public class IWTest {
 
-    private final HealthCalcImpl calcu = new HealthCalcImpl();
+    private final HealthCalcImpl calcu = HealthCalcImpl.getInstance();
 
     ///////////////////////////////////////////////////////////////////////////
     // idealWeight() test
@@ -127,5 +127,25 @@ public class IWTest {
     public void testMujerEspecificaIW() throws InvalidHealthDataException {
         assertEquals(59, Math.round(calcu.idealWeight(168, "f")));
     }
+        @Test
+    @DisplayName("Test peso ideal usando Person hombre")
+    public void testIdealWeightConPersonHombre() throws InvalidHealthDataException {
+        Person person = new HealthPerson(70.0, 1.68, Gender.MALE, 25);
+
+        double expected = 168 - 100 - (168 - 150) / 4.0;
+
+        assertEquals(expected, calcu.idealWeight(person), 0.001);
+    }
+
+    @Test
+    @DisplayName("Test peso ideal usando Person mujer")
+    public void testIdealWeightConPersonMujer() throws InvalidHealthDataException {
+        Person person = new HealthPerson(60.0, 1.68, Gender.FEMALE, 25);
+
+        double expected = 168 - 100 - (168 - 150) / 2.0;
+
+        assertEquals(expected, calcu.idealWeight(person), 0.001);
+    }
+    
 
 }

@@ -20,7 +20,7 @@ public class VAITest {
 
     @BeforeEach
     void setUp() {
-        healthCalc = new HealthCalcImpl();
+		healthCalc = HealthCalcImpl.getInstance();
     }
 
     @Nested

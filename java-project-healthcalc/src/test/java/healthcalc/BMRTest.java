@@ -17,7 +17,7 @@ import healthcalc.exceptions.InvalidHealthDataException;
 @DisplayName("Tests for basal metabolic rate (BMR).")
 public class BMRTest {
 
-    private final HealthCalcImpl calcu = new HealthCalcImpl();
+    private final HealthCalcImpl calcu = HealthCalcImpl.getInstance();
 
     ///////////////////////////////////////////////////////////////////////////
     // basalMetabolicRate() test

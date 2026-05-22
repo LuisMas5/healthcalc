@@ -88,4 +88,12 @@ public double vai(String sex, double bmi, double cc, double tg, double hdl) thro
      * @throws InvalidHealthDataException when parameters are invalid.
      */
     public double basalMetabolicRate(double weightKg, double heightCm, int ageYears, String sex) throws InvalidHealthDataException;
+
+    public double bmi(Person person) throws InvalidHealthDataException;
+    public BMICategory category(Person person) throws InvalidHealthDataException;
+    public double idealWeight(Person person) throws InvalidHealthDataException;
+
+
+
 }
+

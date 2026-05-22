@@ -1,0 +1,27 @@
+Caso de Uso: Calcular IMC
+ID: CU-01
+Actor principal: Médico
+Ámbito: Calculadora de Salud
+Nivel: Objetivo de Usuario
+Descripción: El médico quiere calcular el índice de masa corporal de un paciente en consulta. El sistema debe validar que la altura y peso introducidos tengan sentido físico y realizar el cálculo de forma adecuada.
+Interesados:
+- Médico: Quiere conocer el IMC del paciente para poder orientarle sobre su salud.
+- Paciente: Quiere conocer su IMC para mejorar sus hábitos si fuera necesario.
+
+Precondiciones:
+- El sistema (HealthCalc) debe estar activo.
+- El médico debe tener acceso al sistema.
+
+Disparador: El médico solicita Calcular IMC.
+Garantía de éxito: El sistema devuelve el IMC correcto del paciente.
+Garantía minima: El sistema devuelve un mensaje de error.
+
+Escenario principal de éxito:
+1. El médico introduce la altura y peso del paciente en el sistema.
+2. El sistema valida que los datos introducidos tienen sentido físico.
+3. El sistema calcula el IMC utilizando su correspondiente fórmula (IMC = peso / altura²)
+4. El sistema muestra el IMC correcto del paciente al médico.
+
+Extensiones:
+2a. Altura inválida: El sistema muestra un mensaje que indica que la altura introducida no es válida y solicita una nueva altura. Vuelta al paso 1.
+2b. Peso inválido: El sistema muestra un mensaje que indica que el peso introducido no es válida y solicita una nuevo peso. Vuelta al paso 1.
