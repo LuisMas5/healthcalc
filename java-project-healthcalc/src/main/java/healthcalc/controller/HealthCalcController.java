@@ -5,7 +5,11 @@ import java.awt.Color;
 import healthcalc.HealthCalcImpl;
 import healthcalc.exceptions.InvalidHealthDataException;
 import healthcalc.vista.HealthCalcView;
-import healthcalc.vista.HealthCalcVista;
+
+import healthcalc.BMICategory;
+import healthcalc.Gender;
+import healthcalc.HealthPerson;
+import healthcalc.Person;
 
 public class HealthCalcController {
 
@@ -24,19 +28,21 @@ public class HealthCalcController {
         view.getBtnCalcularIBW().addActionListener(e -> calcularIBW());
     }
 
-    private void calcularBMI() {
+        private void calcularBMI() {
         try {
             double peso = Double.parseDouble(view.getTextFieldPesoBMI().getText());
             double altura = Double.parseDouble(view.getTextFieldAlturaBMI().getText());
 
-            double resultado = model.bmi(peso, altura);
-            String clasificacion = model.bmiClassification(resultado);
+            Person person = new HealthPerson(peso, altura, Gender.MALE, 1);
+
+            double resultado = model.bmi(person);
+            BMICategory categoria = model.category(person);
 
             view.getLblResultadoBMI().setForeground(new Color(0, 128, 0));
             view.getLblClasificacionBMI().setForeground(new Color(0, 128, 0));
 
             view.getLblResultadoBMI().setText(String.format("BMI: %.2f", resultado));
-            view.getLblClasificacionBMI().setText("Clasificación: " + clasificacion);
+            view.getLblClasificacionBMI().setText("Clasificación: " + formatBmiCategory(categoria));
 
         } catch (InvalidHealthDataException e) {
             view.getLblResultadoBMI().setForeground(Color.RED);
@@ -108,6 +114,28 @@ public class HealthCalcController {
         } catch (NumberFormatException e) {
             view.getLblResultadoIBW().setForeground(Color.RED);
             view.getLblResultadoIBW().setText("Error: Invalid values");
+        }
+    }
+    private String formatBmiCategory(BMICategory category) {
+        switch (category) {
+            case SEVERE_THINNESS:
+                return "Severe thinness";
+            case MODERATE_THINNESS:
+                return "Moderate thinness";
+            case MILD_THINNESS:
+                return "Mild thinness";
+            case NORMAL_WEIGHT:
+                return "Normal weight";
+            case OVERWEIGHT:
+                return "Overweight";
+            case OBESE_CLASS_I:
+                return "Obese Class I";
+            case OBESE_CLASS_II:
+                return "Obese Class II";
+            case OBESE_CLASS_III:
+                return "Obese Class III";
+            default:
+                return category.toString();
         }
     }
 }

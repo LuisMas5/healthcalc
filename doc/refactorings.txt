@@ -215,3 +215,91 @@ Número de cambios manuales realizados
 
 1 interfaz creada,1 modificación en HealthCalcImpl.
 2 test añadidos.
+
+
+========================================
+REFACTORING 8
+========================================
+
+Bad smell / problema detectado
+
+Duplicación de código.
+La lógica de clasificación del BMI estaba repetida en bmiClassification(double)
+y en category(Person), usando bloques condicionales similares.
+
+Refactoring aplicado
+
+Extraer método.
+
+Tipo
+
+Refactorización de métodos.
+
+Descripción del cambio realizado
+
+Se ha extraído la lógica común de clasificación BMI a un método privado
+categoryFromBmi(double). Además, bmiClassification(double) reutiliza esa
+lógica y transforma la categoría a texto mediante categoryToText(BMICategory).
+
+Número de cambios manuales realizados
+
+2 métodos privados añadidos y 2 métodos públicos modificados en HealthCalcImpl.
+
+========================================
+REFACTORING 9
+========================================
+
+Bad smell / problema detectado
+
+Divergent Change / uso inconsistente del nuevo modelo.
+La interfaz gráfica de BMI seguía utilizando peso y altura como parámetros
+sueltos, aunque ya existe el modelo Person para representar datos de paciente.
+
+Refactoring aplicado
+
+Introducir objeto parámetro.
+
+Tipo
+
+Refactorización de métodos.
+
+Descripción del cambio realizado
+
+Se ha adaptado el controlador de la GUI para crear un objeto HealthPerson
+en el cálculo de BMI y usar los métodos bmi(Person) y category(Person).
+Los valores de género y edad no afectan al cálculo de BMI.
+
+Número de cambios manuales realizados
+
+1 método modificado en HealthCalcController.
+
+
+========================================
+REFACTORING 10
+========================================
+
+Bad smell / problema detectado
+
+Primitive Obsession / Long Parameter List.
+Las pruebas de peso ideal dependían de parámetros primitivos separados
+para representar datos pertenecientes a una misma persona.
+
+Refactoring aplicado
+
+Introducir objeto parámetro / Reemplazar código de tipo por enumerado.
+
+Tipo
+
+Refactorización de pruebas.
+
+Descripción del cambio realizado
+
+Se han añadido pruebas de peso ideal usando HealthPerson y Gender,
+validando el uso del nuevo modelo Person y del enum Gender en lugar de
+depender únicamente de valores primitivos o strings.
+
+Número de cambios manuales realizados
+
+2 tests añadidos en IWTest.
+
+

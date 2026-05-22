@@ -3,7 +3,7 @@ package healthcalc;
 import healthcalc.exceptions.InvalidHealthDataException;
 
 public class HealthCalcImpl
-        implements HealthCalc, BasalMetabolicIndex {
+        implements HealthCalc, BasalMetabolicIndex, IdealBodyWeight {
 
     private static HealthCalcImpl instance;
 
@@ -20,30 +20,7 @@ public class HealthCalcImpl
 
     @Override
     public String bmiClassification(double bmi) throws InvalidHealthDataException {
-        if (bmi <= 0) {
-            throw new InvalidHealthDataException("BMI must be greater than 0.");
-        }
-        if (bmi > 150) {
-            throw new InvalidHealthDataException("BMI must be within a possible biological range [0-150].");
-        }
-
-        if (bmi < 16) {
-            return "Severe thinness";
-        } else if (bmi < 17) {
-            return "Moderate thinness";
-        } else if (bmi < 18.5) {
-            return "Mild thinness";
-        } else if (bmi < 25) {
-            return "Normal weight";
-        } else if (bmi < 30) {
-            return "Overweight";
-        } else if (bmi < 35) {
-            return "Obese Class I";
-        } else if (bmi < 40) {
-            return "Obese Class II";
-        } else {
-            return "Obese Class III";
-        }
+        return categoryToText(categoryFromBmi(bmi));
     }
 
     @Override
@@ -153,30 +130,62 @@ public class HealthCalcImpl
 
     @Override
     public BMICategory category(Person person) throws InvalidHealthDataException {
-        double bmi = bmi(person);
-
-        if (bmi < 16) {
-            return BMICategory.SEVERE_THINNESS;
-        } else if (bmi < 17) {
-            return BMICategory.MODERATE_THINNESS;
-        } else if (bmi < 18.5) {
-            return BMICategory.MILD_THINNESS;
-        } else if (bmi < 25) {
-            return BMICategory.NORMAL_WEIGHT;
-        } else if (bmi < 30) {
-            return BMICategory.OVERWEIGHT;
-        } else if (bmi < 35) {
-            return BMICategory.OBESE_CLASS_I;
-        } else if (bmi < 40) {
-            return BMICategory.OBESE_CLASS_II;
-        } else {
-            return BMICategory.OBESE_CLASS_III;
-        }
+        return categoryFromBmi(bmi(person));
     }
 
     @Override
     public double idealWeight(Person person) throws InvalidHealthDataException {
         return idealWeight(person.height() * 100, person.gender() == Gender.MALE ? "m" : "f");
     }
+
+    private BMICategory categoryFromBmi(double bmi) throws InvalidHealthDataException {
+    if (bmi <= 0) {
+        throw new InvalidHealthDataException("BMI must be greater than 0.");
+    }
+    if (bmi > 150) {
+        throw new InvalidHealthDataException("BMI must be within a possible biological range [0-150].");
+    }
+
+    if (bmi < 16) {
+        return BMICategory.SEVERE_THINNESS;
+    } else if (bmi < 17) {
+        return BMICategory.MODERATE_THINNESS;
+    } else if (bmi < 18.5) {
+        return BMICategory.MILD_THINNESS;
+    } else if (bmi < 25) {
+        return BMICategory.NORMAL_WEIGHT;
+    } else if (bmi < 30) {
+        return BMICategory.OVERWEIGHT;
+    } else if (bmi < 35) {
+        return BMICategory.OBESE_CLASS_I;
+    } else if (bmi < 40) {
+        return BMICategory.OBESE_CLASS_II;
+    } else {
+        return BMICategory.OBESE_CLASS_III;
+    }
+}
+
+private String categoryToText(BMICategory category) {
+    switch (category) {
+        case SEVERE_THINNESS:
+            return "Severe thinness";
+        case MODERATE_THINNESS:
+            return "Moderate thinness";
+        case MILD_THINNESS:
+            return "Mild thinness";
+        case NORMAL_WEIGHT:
+            return "Normal weight";
+        case OVERWEIGHT:
+            return "Overweight";
+        case OBESE_CLASS_I:
+            return "Obese Class I";
+        case OBESE_CLASS_II:
+            return "Obese Class II";
+        case OBESE_CLASS_III:
+            return "Obese Class III";
+        default:
+            throw new IllegalArgumentException("Unknown BMI category.");
+    }
+}
 
 }
