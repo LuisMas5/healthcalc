@@ -13,14 +13,29 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import healthcalc.exceptions.InvalidHealthDataException;
 
-@DisplayName("Tests para la calculadora de salud.")
+@DisplayName("Tests para la calculadora de salud (VAI).")
 public class VAITest {
 
-    private HealthCalc healthCalc;
+    private VisceralAdiposityIndex vaiCalculator;
 
     @BeforeEach
     void setUp() {
-		healthCalc = HealthCalcImpl.getInstance();
+        vaiCalculator = new VisceralAdiposityIndexImpl();
+    }
+
+    private Person createDummyPerson(Gender gender, double targetBmi) {
+        return new Person() {
+            @Override
+            public double weight() { 
+                return (targetBmi * (1.8 * 1.8)); 
+            }
+            @Override
+            public double height() { return 1.8; } 
+            @Override
+            public Gender gender() { return gender; }
+            @Override
+            public int age() { return 30; }
+        };
     }
 
     @Nested
@@ -30,113 +45,88 @@ public class VAITest {
         @Test
         @DisplayName("Cálculo de VAI para hombre con valores estándar válidos")
         void testVaiHombreValido() throws InvalidHealthDataException {
+            Person hombre = createDummyPerson(Gender.MALE, 27.0);
+            float cc = 95.0f;
+            float tg = 1.5f;
+            float hdl = 1.1f;
+            
+            VisceralAdiposityData data = new VisceralAdiposityData(hombre, cc, tg, hdl);
+            double expected = (cc / (39.68 + (1.88 * 27.0))) * (tg / 1.03) * (1.31 / hdl);
+            double result = vaiCalculator.vai(data);
 
-            // Arrange
-            String sexo = "m";
-            double bmi = 27.0;
-            double cc = 95.0;
-            double tg = 1.5;
-            double hdl = 1.1;
-
-            double expected = (cc / (39.68 + (1.88 * bmi))) *
-                              (tg / 1.03) *
-                              (1.31 / hdl);
-
-            // Act
-            double result = healthCalc.vai(sexo, bmi, cc, tg, hdl);
-
-            // Assert
             assertEquals(expected, result, 0.001);
         }
 
         @Test
         @DisplayName("Cálculo de VAI para mujer con valores estándar válidos")
         void testVaiMujerValido() throws InvalidHealthDataException {
+            Person mujer = createDummyPerson(Gender.FEMALE, 24.0);
+            float cc = 80.0f;
+            float tg = 1.2f;
+            float hdl = 1.4f;
 
-            // Arrange
-            String sexo = "f";
-            double bmi = 24.0;
-            double cc = 80.0;
-            double tg = 1.2;
-            double hdl = 1.4;
+            VisceralAdiposityData data = new VisceralAdiposityData(mujer, cc, tg, hdl);
+            double expected = (cc / (36.58 + (1.89 * 24.0))) * (tg / 0.81) * (1.52 / hdl);
+            double result = vaiCalculator.vai(data);
 
-            double expected = (cc / (36.58 + (1.89 * bmi))) *
-                              (tg / 0.81) *
-                              (1.52 / hdl);
-
-            // Act
-            double result = healthCalc.vai(sexo, bmi, cc, tg, hdl);
-
-            // Assert
             assertEquals(expected, result, 0.001);
-        }
-
-        @Test
-        @DisplayName("Lanzar excepción cuando el sexo no es 'm' ni 'f'")
-        void testSexoInvalido() {
-            assertAll(
-                () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("x", 25.0, 90.0, 1.2, 1.3)),
-                () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("M", 25.0, 90.0, 1.2, 1.3)),
-                () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("", 25.0, 90.0, 1.2, 1.3))
-            );
         }
 
         @Test
         @DisplayName("Lanzar excepción cuando los valores son negativos o cero")
         void testValoresNegativosOCero() {
+            Person hombre = createDummyPerson(Gender.MALE, 25.0);
+            
             assertAll(
                 () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("m", -1.0, 90.0, 1.2, 1.3)),
+                        () -> vaiCalculator.vai(new VisceralAdiposityData(hombre, -10.0f, 1.2f, 1.3f))),
                 () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("m", 25.0, -10.0, 1.2, 1.3)),
+                        () -> vaiCalculator.vai(new VisceralAdiposityData(hombre, 90.0f, -1.0f, 1.3f))),
                 () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("m", 25.0, 90.0, -1.0, 1.3)),
+                        () -> vaiCalculator.vai(new VisceralAdiposityData(hombre, 90.0f, 1.2f, -1.0f))),
                 () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("m", 25.0, 90.0, 1.2, -1.0)),
+                        () -> vaiCalculator.vai(new VisceralAdiposityData(hombre, 0.0f, 1.2f, 1.3f))),
                 () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("m", 0.0, 90.0, 1.2, 1.3)),
+                        () -> vaiCalculator.vai(new VisceralAdiposityData(hombre, 90.0f, 0.0f, 1.3f))),
                 () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("m", 25.0, 0.0, 1.2, 1.3)),
-                () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("m", 25.0, 90.0, 0.0, 1.3)),
-                () -> assertThrows(InvalidHealthDataException.class,
-                        () -> healthCalc.vai("m", 25.0, 90.0, 1.2, 0.0))
+                        () -> vaiCalculator.vai(new VisceralAdiposityData(hombre, 90.0f, 1.2f, 0.0f)))
             );
         }
 
-@ParameterizedTest(name = "BMI extremo inválido: {0}")
-@ValueSource(doubles = {150.1, 200.0, 500.0})
-@DisplayName("Bloqueo de valores de BMI superiores al límite humano razonable (150)")
-void testBmiMaximoImposible(double bmi) {
-    assertThrows(InvalidHealthDataException.class,
-        () -> healthCalc.vai("m", bmi, 90.0, 1.2, 1.3));
-}
+        @ParameterizedTest(name = "BMI extremo: {0}")
+        @ValueSource(doubles = {150.1, 200.0, 500.0})
+        @DisplayName("Bloqueo de valores de BMI superiores al límite humano razonable")
+        void testBmiMaximoImposible(double bmi) {
+            Person hombreBmiExtremo = createDummyPerson(Gender.MALE, bmi);
+            assertThrows(InvalidHealthDataException.class,
+                () -> vaiCalculator.vai(new VisceralAdiposityData(hombreBmiExtremo, 90.0f, 1.2f, 1.3f)));
+        }
 
-@ParameterizedTest(name = "CC extremo inválido: {0}")
-@ValueSource(doubles = {300.1, 400.0, 1000.0})
-@DisplayName("Bloqueo de valores de circunferencia de cintura superiores al límite humano razonable (300 cm)")
-void testCcMaximoImposible(double cc) {
-    assertThrows(InvalidHealthDataException.class,
-        () -> healthCalc.vai("m", 25.0, cc, 1.2, 1.3));
-}
+        @ParameterizedTest(name = "CC extremo: {0}")
+        @ValueSource(floats = {300.1f, 400.0f, 1000.0f})
+        @DisplayName("Bloqueo de valores de CC superiores al límite")
+        void testCcMaximoImposible(float cc) {
+            Person hombre = createDummyPerson(Gender.MALE, 25.0);
+            assertThrows(InvalidHealthDataException.class,
+                () -> vaiCalculator.vai(new VisceralAdiposityData(hombre, cc, 1.2f, 1.3f)));
+        }
 
-@ParameterizedTest(name = "TG extremo inválido: {0}")
-@ValueSource(doubles = {20.1, 50.0, 100.0})
-@DisplayName("Bloqueo de valores de triglicéridos superiores al límite biológico razonable")
-void testTgMaximoImposible(double tg) {
-    assertThrows(InvalidHealthDataException.class,
-        () -> healthCalc.vai("m", 25.0, 90.0, tg, 1.3));
-}
+        @ParameterizedTest(name = "TG extremo: {0}")
+        @ValueSource(floats = {20.1f, 50.0f, 100.0f})
+        @DisplayName("Bloqueo de valores de TG superiores al límite biológico")
+        void testTgMaximoImposible(float tg) {
+            Person hombre = createDummyPerson(Gender.MALE, 25.0);
+            assertThrows(InvalidHealthDataException.class,
+                () -> vaiCalculator.vai(new VisceralAdiposityData(hombre, 90.0f, tg, 1.3f)));
+        }
 
-@ParameterizedTest(name = "HDL extremo inválido: {0}")
-@ValueSource(doubles = {5.1, 10.0, 20.0})
-@DisplayName("Bloqueo de valores de HDL superiores al límite biológico razonable")
-void testHdlMaximoImposible(double hdl) {
-    assertThrows(InvalidHealthDataException.class,
-        () -> healthCalc.vai("m", 25.0, 90.0, 1.2, hdl));
-}
+        @ParameterizedTest(name = "HDL extremo: {0}")
+        @ValueSource(floats = {5.1f, 10.0f, 20.0f})
+        @DisplayName("Bloqueo de valores de HDL superiores al límite biológico")
+        void testHdlMaximoImposible(float hdl) {
+            Person hombre = createDummyPerson(Gender.MALE, 25.0);
+            assertThrows(InvalidHealthDataException.class,
+                () -> vaiCalculator.vai(new VisceralAdiposityData(hombre, 90.0f, 1.2f, hdl)));
+        }
     }
 }

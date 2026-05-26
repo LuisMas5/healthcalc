@@ -302,4 +302,27 @@ Número de cambios manuales realizados
 
 2 tests añadidos en IWTest.
 
+========================================
+REFACTORING 11
+========================================
 
+Bad smell / problema detectado
+
+Long Parameter List y Primitive Obsession.
+El método de cálculo del VAI recibía una lista demasiado larga de parámetros primitivos sueltos.
+
+Refactoring aplicado
+
+Introduce Parameter Object / Extract Interface.
+
+Tipo
+
+Refactorización de clases y métodos.
+
+Descripción del cambio realizado
+
+Se han agrupado los parámetros médicos en una clase de datos específica (VisceralAdiposityData), y se ha extraído la interfaz de VAI (VisceralAdiposityIndex) para igualar el diseño arquitectónico al del resto de métricas.
+
+Número de cambios manuales realizados
+
+3 archivos nuevos creados, 1 método antiguo eliminado y 1 archivo de tests adaptado.
