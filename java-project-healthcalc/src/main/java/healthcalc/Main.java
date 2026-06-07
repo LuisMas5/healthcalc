@@ -13,7 +13,7 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in).useLocale(Locale.getDefault());
-        HealthCalc healthCalc = new HealthCalcImpl();
+        HealthCalc healthCalc = HealthCalcImpl.getInstance();
 
         try {
             System.out.println("==========================================");
